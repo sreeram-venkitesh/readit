@@ -23,25 +23,29 @@ function List(){
 
     useEffect(
         ()=>{
-          axios.get('https://www.reddit.com/r/react.json')
-          .then(res=> {
+          const url = 'https://www.reddit.com/r/' + subreddit + '.json';
+          axios.get(url)
+          .then(res=>{
             const newPosts =  res.data.data.children.map(obj => obj.data)
             const loadingText = document.getElementById('loadingText')
-            loadingText.innerHTML =''
             setPosts(newPosts);
+            loadingText.innerHTML =''
           })
-        },[]
+        },[posts]
     )
 
     function selectFunction(){
-        console.log('poda')
+        const optionSelect = document.getElementById('optionSelect')
+        selectSub(subreddit => optionSelect.value)
+        const loadingText = document.getElementById('loadingText')
+        const list = document.getElementById('list')
+        loadingText.innerHTML ='Loading...'
     }
-
-    console.log(subreddit)
-     return(
+    
+    return(
         <div className='list'>
 
-            <select className='option' id='optionSelect' onSubmit={selectFunction}>  
+            <select className='option' id='optionSelect' onChange={selectFunction}>  
                 <option value='all' defaultValue>r/all</option>
                 <option value='askreddit' >r/AskReddit</option>
                 <option value='javascript'>r/JavaScript</option>
@@ -50,7 +54,7 @@ function List(){
             </select>
             <br/><br/>
             <p id='loadingText'> Loading ... </p>
-            <ul className='cardList'>
+            <ul id="list" className='cardList'>
                 {
                     posts.map(post => (
                         <li className="li" key={post.id}><Card title={post.title} selftext={post.selftext} upvotes={post.ups} link={post.url}/></li>
